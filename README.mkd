@@ -1,0 +1,12 @@
+# Python Snippets
+
+This is just a collection of snippets or just reference on how to implement
+various things.  No guarantees if any of this works or is the "right way" to
+do it.  I'll gladly take comments if something is extremely bad.
+
+# Revision History Reset
+
+This is for my own reference, but due to this code originally being part of a
+larger svn repos that may have contained sensitive information I opted to just
+remove all revision history.  Since this is just reference information I'm not
+too concerned over lost version history.
