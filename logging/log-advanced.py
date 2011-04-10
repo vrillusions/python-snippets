@@ -24,13 +24,13 @@ class SomeClass:
         self._log.warning('test warning message')
 
 def main():
-	"""The main function."""
-	# Default format doesn't include a timestamp
-	# This also shows how you specify a console handler, setup is similar for
-	# a file handler
-	log = logging.getLogger(__name__)
-	log.setLevel(logging.WARNING)
-	# create console handler and set level to debug
+    """The main function."""
+    # Default format doesn't include a timestamp
+    # This also shows how you specify a console handler, setup is similar for
+    # a file handler
+    log = logging.getLogger(__name__)
+    log.setLevel(logging.WARNING)
+    # create console handler and set level to debug
     ch = logging.StreamHandler()
     ch.setLevel(logging.DEBUG)
     # create formatter
@@ -39,25 +39,25 @@ def main():
     ch.setFormatter(formatter)
     # add ch to logger
     log.addHandler(ch)
-	log.warning('test warning message')
-	sc = SomeClass()
-	sc.error()
+    log.warning('test warning message')
+    sc = SomeClass()
+    sc.error()
 
 
 if __name__ == "__main__":
-	try:
-		main()
-	except KeyboardInterrupt, e:
-		# Ctrl-c
-		raise e
-	except SystemExit, e:
-		# sys.exit()
-		raise e
-	except Exception, e:
-		print "ERROR, UNEXPECTED EXCEPTION"
-		print str(e)
-		traceback.print_exc()
-		sys.exit(1)
-	else:
-		# Main function is done, exit cleanly
-		sys.exit(0)
+    try:
+        main()
+    except KeyboardInterrupt, e:
+        # Ctrl-c
+        raise e
+    except SystemExit, e:
+        # sys.exit()
+        raise e
+    except Exception, e:
+        print "ERROR, UNEXPECTED EXCEPTION"
+        print str(e)
+        traceback.print_exc()
+        sys.exit(1)
+    else:
+        # Main function is done, exit cleanly
+        sys.exit(0)

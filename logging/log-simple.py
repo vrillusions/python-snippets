@@ -21,33 +21,33 @@ class SomeClass:
         self._log.error('test error message')
 
 def main():
-	"""The main function."""
-	# Log Levels in descending order
-	# debug
-	# warning
-	# error
-	# critical
-	logging.basicConfig(level=logging.WARNING)
-	log = logging.getLogger(__name__)
-	log.warning('test warning message')
-	sc = SomeClass()
-	sc.error()
+    """The main function."""
+    # Log Levels in descending order
+    # debug
+    # warning
+    # error
+    # critical
+    logging.basicConfig(level=logging.WARNING)
+    log = logging.getLogger(__name__)
+    log.warning('test warning message')
+    sc = SomeClass()
+    sc.error()
 
 
 if __name__ == "__main__":
-	try:
-		main()
-	except KeyboardInterrupt, e:
-		# Ctrl-c
-		raise e
-	except SystemExit, e:
-		# sys.exit()
-		raise e
-	except Exception, e:
-		print "ERROR, UNEXPECTED EXCEPTION"
-		print str(e)
-		traceback.print_exc()
-		sys.exit(1)
-	else:
-		# Main function is done, exit cleanly
-		sys.exit(0)
+    try:
+        main()
+    except KeyboardInterrupt, e:
+        # Ctrl-c
+        raise e
+    except SystemExit, e:
+        # sys.exit()
+        raise e
+    except Exception, e:
+        print "ERROR, UNEXPECTED EXCEPTION"
+        print str(e)
+        traceback.print_exc()
+        sys.exit(1)
+    else:
+        # Main function is done, exit cleanly
+        sys.exit(0)

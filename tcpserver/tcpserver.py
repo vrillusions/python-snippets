@@ -40,7 +40,7 @@ class RequestHandler(SocketServer.StreamRequestHandler):
 
 
 def main():
-	"""The main function."""
+    """The main function."""
     port = 12345
     tcpserver = SocketServer.TCPServer(('127.0.0.1', port), RequestHandler)
     print 'Server started on port', str(port)
@@ -48,19 +48,19 @@ def main():
         
 
 if __name__ == "__main__":
-	try:
-		main()
-	except KeyboardInterrupt, e:
-		# Ctrl-c
-		raise e
-	except SystemExit, e:
-		# sys.exit()
-		raise e
-	except Exception, e:
-		print "ERROR, UNEXPECTED EXCEPTION"
-		print str(e)
-		traceback.print_exc()
-		sys.exit(1)
-	else:
-		# Main function is done, exit cleanly
-		sys.exit(0)
+    try:
+        main()
+    except KeyboardInterrupt, e:
+        # Ctrl-c
+        raise e
+    except SystemExit, e:
+        # sys.exit()
+        raise e
+    except Exception, e:
+        print "ERROR, UNEXPECTED EXCEPTION"
+        print str(e)
+        traceback.print_exc()
+        sys.exit(1)
+    else:
+        # Main function is done, exit cleanly
+        sys.exit(0)
