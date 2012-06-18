@@ -1,0 +1,3 @@
+# firefox sessionstore url extractor
+
+Several times now I've had my firefox tabs disappear. Sometimes I can just restore from backup and it just works, other times it doesn't.  Place a sessionstore.js file in the same directory and it will print out the URLs of all tabs.  I'm not 100% sure if this works with tab groups or not.
