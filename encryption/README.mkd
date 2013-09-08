@@ -1,0 +1,87 @@
+Encryption Testing
+==================
+
+The goal of this is to encrypt/decrypt something in python/openssl interchangeably. On python side I'm using pycrypto (python-crypto package in ubuntu).
+
+OpenSSL Samples
+---------------
+
+* Have openssl derive everything from given password (it uses md5 for this by default)
+
+        $ echo "Example String" | \
+            openssl aes-256-cbc -e -base64 -p -pass pass:secret
+        salt=8E838DCCD8FB9F31
+        key=68C783F3E7232C535DD88619E1AFAEC69FDA9B4EA9B03F6B531791268F3C9958
+        iv =4E8FA41D836120DD428AC7AE03E4DF4D
+        U2FsdGVkX1+Og43M2PufMVcxBpL2mkkoL1OreDvdySg=
+        $ echo "U2FsdGVkX1+Og43M2PufMVcxBpL2mkkoL1OreDvdySg=" | \
+            openssl aes-256-cbc -d -base64 -pass pass:secret
+        Example String
+
+* We provide our own key and iv and prove that the value of salt makes no difference when using our own key and iv
+
+        $ src=$(dd if=/dev/urandom bs=64 count=1 2>/dev/null | openssl sha512 | awk '{print $2}')echo $src
+        $ echo $src
+        33f678bcb800d74cc7f718591ac537ef8d99bc23a7a4e7eabec30c680a4f71a55ecbcf9bc83bd881570a04854a864d69ee50d2dbfea208863f9fb0a00cc48c4a
+        $ echo "Key is first 64 characters: ${src:0:64}"
+        Key is first 64 characters: 33f678bcb800d74cc7f718591ac537ef8d99bc23a7a4e7eabec30c680a4f71a5
+        $ echo "IV is next 32 characters: ${src:64:32}"
+        IV is next 32 characters: 5ecbcf9bc83bd881570a04854a864d69
+        $ echo "Salt is the next 16 characters: ${src:96:16}"
+        Salt is the next 16 characters: ee50d2dbfea20886
+        $ echo "Example String" | \
+            openssl aes-256-cbc -e -base64 -p -K ${src:0:64} -iv ${src:64:32}
+        salt=0800000000000000
+        key=33F678BCB800D74CC7F718591AC537EF8D99BC23A7A4E7EABEC30C680A4F71A5
+        iv =5ECBCF9BC83BD881570A04854A864D69
+        cFULDm9NAFROm/nvurX3AQ==
+        $ echo "Example String" | \
+            openssl aes-256-cbc -e -base64 -p -K ${src:0:64} -iv ${src:64:32} -S ${src:96:16}
+        salt=0A00000000000000
+        key=33F678BCB800D74CC7F718591AC537EF8D99BC23A7A4E7EABEC30C680A4F71A5
+        iv =5ECBCF9BC83BD881570A04854A864D69
+        cFULDm9NAFROm/nvurX3AQ==
+        $ echo "Example String" | \
+            openssl aes-256-cbc -e -base64 -p -K ${src:0:64} -iv ${src:64:32} -nosalt
+        key=33F678BCB800D74CC7F718591AC537EF8D99BC23A7A4E7EABEC30C680A4F71A5
+        iv =5ECBCF9BC83BD881570A04854A864D69
+        cFULDm9NAFROm/nvurX3AQ==
+        $ echo "cFULDm9NAFROm/nvurX3AQ==" | \
+            openssl aes-256-cbc -d -base64 -K ${src:0:64} -iv ${src:64:32}
+        Example String
+
+* This example combines both from the above. Idea being the actual password is pseudorandomly generated. The users' password decrypts the actual passphrase that decrypts the actual message. Reason for implementing like this is the user can change their password without having to encrypt all the messages again.  Also a 64 byte password from `/dev/random` is going to have much better entropy than what most will use for a password. Also this means the decryption passphrase can be stored on disk as it's protected by the users password.
+
+        $ src=$(dd if=/dev/urandom bs=64 count=1 2>/dev/null | openssl sha512 | awk '{print substr($2,1,96)}')
+        $ echo "Source passphrase: $src"
+        Source passphrase: 8edd4d6e48694a3fef29d4e0b232bcba87c9bf1b1937c9585efa761f4ab49d097961bad663551911378ccc8dd054b4b1
+        $ echo "User's password is: secret"
+        User's password is: secret
+        # Note we're using sha1 message digest as that's the best available, also we don't include line ending (the -n in echo)
+        # also sending straight to a file.
+        $ echo -n "$src" | openssl aes-256-cbc -e -base64 -md sha1 -pass pass:secret -out secret.b64
+        $ echo "Passphrase after encrypted in base64 form:"
+        Passphrase after encrypted in base64 form:
+        $ cat secret.b64
+        U2FsdGVkX1/fweIERIwLwTM0zqMb8s7/InruKoi/IYicQm18p31w+1+Cj6UpbEpJ
+        1+Y0qxZ66SHM8QaqrFy7WBMGT/Y6Zm/wtPRSxz1dai0Y7aulHHFAMVeKt7sb/ETM
+        cg1+Lza7MFbiwUxzJbmBXC0NfK8An8YdLQjTcYlnFL0=
+        $ decrypted_key=$(openssl aes-256-cbc -d -base64 -md sha1 -pass pass:secret -in secret.b64)
+        $ echo "Passphrase once decrypted with user's password and back in hexadecimal form:"
+        Passphrase once decrypted with user's password and back in hexadecimal form:
+        $ echo $decrypted_key
+        8edd4d6e48694a3fef29d4e0b232bcba87c9bf1b1937c9585efa761f4ab49d097961bad663551911378ccc8dd054b4b1
+        $ echo "Key is first 64 characters: ${decrypted_key:0:64}"
+        Key is first 64 characters: 8edd4d6e48694a3fef29d4e0b232bcba87c9bf1b1937c9585efa761f4ab49d09
+        $ echo "IV is next 32 characters: ${decrypted_key:64:32}"
+        IV is next 32 characters: 7961bad663551911378ccc8dd054b4b1
+        # since there's no key derivation this doesn't need to specify message digest
+        $ echo "Example String" | openssl aes-256-cbc -e -base64 -K ${decrypted_key:0:64} -iv ${decrypted_key:64:32}
+        D9AwXs+G2XQBq3Cqxn2nXQ==
+        # at decryption time would pull the encrypted passphrase from somewhere, decrypt it, and use that
+        # also once decrypted with old password it can be reencrypted with new password.
+
+Python
+------
+
+Python will need to be full compatible with everything above. Primarily the final example as that's about what will actually happen.  It would be preferable to pass the user's password through a [pbkdf2](https://en.wikipedia.org/wiki/PBKDF2). Or just run the line that encrypts the source passphrase and each run's input is the output from previous (don't do base64 till final run). Basically something to slow down a brute force attack. Also python will need to know how to extract the salt from encrypted content and properly determine the key and iv values. Pycrypto may actually handle this though.
