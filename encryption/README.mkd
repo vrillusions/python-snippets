@@ -81,7 +81,31 @@ OpenSSL Samples
         # at decryption time would pull the encrypted passphrase from somewhere, decrypt it, and use that
         # also once decrypted with old password it can be reencrypted with new password.
 
+* While testing things on python I realized that "Example String" is 16 bytes (15 + newline character). When the given text is not a multiple of the block size, which is 16, it needs to pad the string. This is where it may get complicated between openssl and pycrypto. I used the same key and iv as the first section above and did "tests"
+
+        $ key='33F678BCB800D74CC7F718591AC537EF8D99BC23A7A4E7EABEC30C680A4F71A5'
+        $ iv='5ECBCF9BC83BD881570A04854A864D69'
+        $ echo "tests" | openssl aes-256-cbc -e -base64 -p -K $key -iv $iv
+        salt=0800000000000000
+        key=33F678BCB800D74CC7F718591AC537EF8D99BC23A7A4E7EABEC30C680A4F71A5
+        iv =5ECBCF9BC83BD881570A04854A864D69
+        hCTVzM84cuWX2LuvKfb8zg==
+
 Python
 ------
 
 Python will need to be full compatible with everything above. Primarily the final example as that's about what will actually happen.  It would be preferable to pass the user's password through a [pbkdf2](https://en.wikipedia.org/wiki/PBKDF2). Or just run the line that encrypts the source passphrase and each run's input is the output from previous (don't do base64 till final run). Basically something to slow down a brute force attack. Also python will need to know how to extract the salt from encrypted content and properly determine the key and iv values. Pycrypto may actually handle this though.
+
+* OpenSSL uses PKCS#5 padding officially which is technically invalid.  PKCS#5 was only defined for 8 byte block sizes and aes uses 16 byte blocks.  PKCS#7 is compatible and officially defined for up to 256 byte block sizes. They can be used interchangably. [reference](https://en.wikipedia.org/wiki/Padding_%28cryptography%29#PKCS7).
+* When instantiating the AES class you have to make sure not to reuse the same instance again.  Do not do this:
+
+        aes = AES.new(key, AES.MODE_CBC, iv)
+        ciphertext = aes.encrypt(text)
+        b64_ciphertext = base64.b64encode(ciphertext)
+        # store b64_ciphertext somewhere
+        # have a new block of text but keeping the key and iv the same (which
+        # you should never do, the iv should be generated each time)
+        ciphertext2 = aes.encrypt(text2)
+        b64_ciphertext2 = base64.b64encode
+
+* calling encrypt on the same class will continue the CBC mode. That means to decrypt `ciphertext2` you need to decrypt `ciphertext` first. In practice this will be contained in a wrapper class which would handle cleaning up after something is encrypted. Plus like it says the iv should be a new random 16 byte string.
