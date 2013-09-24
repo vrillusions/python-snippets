@@ -1,0 +1,9 @@
+# Guild Wars 2 API
+
+This is just some messing about with Guild Wars 2 API.
+
+First time you download this you can run `get_names.sh` which will download the JSON files that map the id to a description. You only need to run these once, perhaps every time a large update happens.  Doesn't need to run often though.  Future enhancements I could see me doing is messing with making a gui for it and a dynamic config.  Typically now I run these with `watch -d=cumulative -n 120 ./whatever.py` which will run the script every 2 minutes and highlight changes. You can drop the cumulative if you want but I have it in case it's a while before looking at it.
+
+## Credits
+
+* The `gw2api.py` is by [mocnik](https://github.com/mocnik/gw2api).

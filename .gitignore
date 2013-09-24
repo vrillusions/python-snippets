@@ -1,1 +1,2 @@
 *.py?
+/gw2api/*.json
