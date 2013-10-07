@@ -1,0 +1,41 @@
+---
+#world_name: Tarnished Coast ##Currently not implemented so you need to use
+#    get_names.sh script to search for what the world_id is.
+world_id: 1017
+#loglevel: debug
+loglevel: warning
+events:
+  - name: Taidha Covington
+    include_map_name: false
+    event_ids:
+      - id: E5B1EF7A-DF6B-48A8-9EFD-5C40DFD270EB
+        description: Defend Lionguard Lindi as she searches for buried treasure.
+      - id: 6158E720-41CB-4684-8F4A-86D2D122DF4D
+        description: Protect Bill and Hekja as they clear Risen from the area.
+      - id: B6B7EE2A-AD6E-451B-9FE5-D5B0AD125BB2
+        description: Eliminate the cannons at the northern defensive tower.
+      - id: 189E7ABE-1413-4F47-858E-4612D40BF711
+        description: Capture Taidha Covington's southern defensive tower.
+      - id: 0E0801AF-28CF-4FF7-8064-BB2F4A816D23
+        description: Defend the galleon and help it destroy Taidha's gate.
+      - id: 242BD241-E360-48F1-A8D9-57180E146789
+        description: Kill Admiral Taidha Covington.
+  - name: Scarlett's Minions Attack
+    include_map_name: true
+    # All events have same description
+    default_event_description: Scarlet's Minions Invade!
+    event_ids:
+      - id: 11442531-6B20-411F-B0A6-D2A2C31DD668
+      - id: 92979945-63A4-42D7-8AE5-1EFADC9E636F
+      - id: 90FEBBE9-0066-42CF-9C48-703C920AFB9D
+      - id: 9795C994-4C12-4E1F-82A6-D541F76D9D37
+      - id: 46BBCFDD-1285-4246-A9FA-620773C7D4C6
+      - id: 526EFDC9-3F3C-492E-911E-14AFE9EAE70D
+      - id: FE5F6233-DAD6-4C63-921D-F132DFCF3397
+      - id: 5FE50E83-758B-4573-A424-A1661FBC970A
+      - id: 6195E248-1DD4-452B-A7DD-3472162E0683
+      - id: 6DEB01AE-675E-4FF9-9789-53CB73FC621E
+      - id: CF657BC1-D5CE-41D3-A630-A3E509451B7A
+      - id: D1B8B6D2-5E61-44DE-92C6-D49A9BBBB6E2
+      - id: C7CC535C-81A1-4E84-993B-6384C911399A
+

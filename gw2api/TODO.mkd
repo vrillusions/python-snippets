@@ -1,0 +1,6 @@
+# TODO
+
+* Use absolute paths to file locations.
+    * Follow the [XDG Basedir Spec](http://standards.freedesktop.org/basedir-spec/basedir-spec-latest.html) for a location.
+        * There are existing libraries for this but all I need for this is the config directory and cache directory
+
