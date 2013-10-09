@@ -7,7 +7,7 @@ NOTE: The __future__ imports that make it more v3.x ready were added in v2.6.
 Thus this template will only work in python v2.6 or higher.
 
 Requirements
-    Python v2.6 or higher: This is due to the importsi from future and to make
+    Python v2.6 or higher: This is due to the imports from future and to make
         this more compatible with version 3.x.
 
 Environment Variables
@@ -17,7 +17,7 @@ Environment Variables
 """
 
 # Standard library imports
-from __future__ import absolute_import, print_function, unicode_literals
+from __future__ import absolute_import, print_function, unicode_literals, division
 import os
 import sys
 import logging
