@@ -15,15 +15,16 @@ Requirements:
 
 """
 
-from __future__ import absolute_import, print_function, unicode_literals, division
+from __future__ import absolute_import, print_function
+from __future__ import unicode_literals, division
 import os
 import sys
 import logging
 import time
 import json
 # configparser and collections are used by get_config() function
-import ConfigParser
-import collections
+#import ConfigParser
+#import collections
 
 import yaml
 import requests
@@ -37,9 +38,9 @@ __version__ = '0.1.0-dev'
 # DEBUG, INFO, WARNING, ERROR, or CRITICAL
 # This will set log level from the environment variable LOGLEVEL or default
 # to warning. You can also just hardcode the error if this is simple.
-_loglevel = getattr(logging, os.getenv('LOGLEVEL', 'WARNING').upper())
-_logformat = "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
-logging.basicConfig(level=_loglevel, format=_logformat)
+_LOGLEVEL = getattr(logging, os.getenv('LOGLEVEL', 'WARNING').upper())
+_LOGFORMAT = "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+logging.basicConfig(level=_LOGLEVEL, format=_LOGFORMAT)
 
 
 # Examples on documenting functions and classes. You can also look in to making
@@ -47,7 +48,7 @@ logging.basicConfig(level=_loglevel, format=_logformat)
 #
 # A lot of this came from
 # http://google-styleguide.googlecode.com/svn/trunk/pyguide.html
-class GW2():
+class GW2(object):
     """GuildWars 2 API wrapper
 
     Provides utlity functions mostly dealing with retrieving and caching the
@@ -76,6 +77,7 @@ class GW2():
 
     def _download_endpoint(self, endpoint, world_id=None, event_id=None):
         """Fetches endpoint from api and updates cache file."""
+        # pylint: disable=E1103
         filename = '%s.json' % endpoint
         cache_file = os.path.normpath('%s/%s' % (self.cache_dir, filename))
         url = '%s/%s' % (self.baseurl, filename)
@@ -84,15 +86,16 @@ class GW2():
         payload['event_id'] = event_id
         self._log.info('Fetching %s' % url)
         self.api_count = self.api_count + 1
-        r = requests.get(url, params=payload)
-        r.raise_for_status()
-        content = r.content
+        req = requests.get(url, params=payload)
+        req.raise_for_status()
+        content = req.content
         self._log.info('Updating cache file: %s' % cache_file)
         with open(cache_file, 'w') as fh:
             fh.write(content)
         return content
 
-    def _get_name_by_id(self, haystack, needle):
+    @staticmethod
+    def _get_name_by_id(haystack, needle):
         """Searches list on 'id' and return 'name' value.
 
         This is when you want the name from a given id. This assumes there will
@@ -109,7 +112,8 @@ class GW2():
         else:
             return None
 
-    def _get_event_status_by_id(self, haystack, needle):
+    @staticmethod
+    def _get_event_status_by_id(haystack, needle):
         """Searches list on 'id' and return entire line.
 
         Used to get the status of an event. It returns the entire matching
@@ -120,8 +124,12 @@ class GW2():
             needle: The value to look for
 
         """
-        #self._log.debug('_get_event_status_by_id: haystack: %s needle: %s' % (haystack, needle))
-        result = [item for item in haystack['events'] if item['event_id'] == needle]
+        #self._log.debug('_get_event_status_by_id: haystack: %s needle: %s'
+        #    % (haystack, needle))
+        result = [item
+            for item
+            in haystack['events']
+            if item['event_id'] == needle]
         if result:
             return result[0]
         else:
@@ -135,13 +143,15 @@ class GW2():
         cache_file = os.path.normpath('%s/%s' % (self.cache_dir, filename))
         try:
             filestat = os.stat(cache_file)
-        except OSError as e:
-            self._log.info('Cache file not found, will download: %s' % e)
+        # pylint: disable=W0621
+        except OSError as err:
+            self._log.info('Cache file not found, will download: %s' % err)
             content = self._download_endpoint(endpoint, world_id)
-            pass
+        # pylint: enable=W0621
         else:
             file_age = time.time() - filestat.st_mtime
-            self._log.info('Cache file %s is %d seconds old' % (cache_file, file_age))
+            self._log.info('Cache file %s is %d seconds old'
+                % (cache_file, file_age))
             if file_age > cache_age:
                 self._log.info('Cache file too old, fetching new one')
                 content = self._download_endpoint(endpoint, world_id)
@@ -164,15 +174,20 @@ class GW2():
         return name
 
     def get_event_status(self, event_id, cache_age=10):
-        # only keep event status around for 10 seconds. Idea being if I don't
-        # do that in the currently implemenation it would download the file
-        # for each event. Need to look into a memoize function.
-        events = self.get_endpoint('events', world_id=self.world_id, cache_age=cache_age)
+        """Gets the status of the specified event_id.
+
+        only keep event status around for 10 seconds. Idea being if I don't
+        do that in the currently implemenation it would download the file
+        for each event. Need to look into a memoize function.
+
+        """
+        events = self.get_endpoint('events', world_id=self.world_id,
+            cache_age=cache_age)
         details = self._get_event_status_by_id(events, event_id)
         return details
 
 
-def get_config(appname):
+def get_config():
     """Load options from an ini-style config.
 
     This loads the config file from several standard locations. This tries to be
@@ -211,7 +226,7 @@ def main(argv=None):
     """The main function."""
     if argv is None:
         argv = sys.argv
-    config = get_config('gw2api')
+    config = get_config()
     #loglevel = getattr(logging, config.get('general', 'loglevel').upper())
     loglevel = getattr(logging, config['loglevel'].upper())
     log = logging.getLogger(__name__)
@@ -222,7 +237,8 @@ def main(argv=None):
     #events = []
     #for section in sections:
     #    if section.startswith('event_'):
-    #        logging.debug('Found event: %s' % config.get(section, 'description'))
+    #        logging.debug('Found event: %s' % config.get(section,
+    #            'description'))
     #        events.append(config.items(section))
     #for event in events:
     #    for k in event:
@@ -235,7 +251,8 @@ def main(argv=None):
         for event_id in event['event_ids']:
             event_status = gw2.get_event_status(event_id['id'])
             log.debug(event_status)
-            if 'include_map_name' in event and event['include_map_name'] is True:
+            if ('include_map_name' in event
+                    and event['include_map_name'] is True):
                 map_name = gw2.lookup_name('map_names', event_status['map_id'])
             else:
                 map_name = ''
@@ -246,7 +263,8 @@ def main(argv=None):
             else:
                 description = ''
 
-            print("%-11s %-20s %s" % (event_status['state'], map_name, description))
+            print("%-11s %-20s %s" %
+                (event_status['state'], map_name, description))
     log.info('API requests made: %d' % gw2.api_count)
 
 
@@ -260,8 +278,9 @@ if __name__ == "__main__":
     #    log.error('Received keyboard interupt')
     #    raise e
     # This catches all "non system exiting" exceptions
-    except Exception as e:
+    # pylint: disable=W0703
+    except Exception as err:
         logging.critical("ERROR, UNEXPECTED EXCEPTION")
-        logging.critical(str(e), exc_info=True)
+        logging.critical(str(err), exc_info=True)
         sys.exit(1)
 
