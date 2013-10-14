@@ -7,8 +7,9 @@ NOTE: The __future__ imports that make it more v3.x ready were added in v2.6.
 Thus this template will only work in python v2.6 or higher.
 
 Requirements
-    Python v2.6 or higher: This is due to the imports from future and to make
-        this more compatible with version 3.x.
+    Python v2.6 or higher: This is due to the `from future` imports and to make
+        this more compatible with version 3.x. For example this template can run
+        on both python v2 and v3.
 
 Environment Variables
     LOGLEVEL: overrides the level specified here. Choices are debug, info,
@@ -64,10 +65,13 @@ def sample_def(meh=None):
     return 'hello'
 
 
-class SampleClass():
+class SampleClass(object):
     """This is a sample class.
 
-    Just illustrating how a docblock would look.
+    Just illustrating how a docblock would look. Note how this class inherits
+    from `object`. In Python v2 this declares this as a 'new style' class. In
+    Python v3 this is the default and no longer need the `object` (but it will
+    still work if included.
 
     Attributes:
         blah: This stores some number of blahs
