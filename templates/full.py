@@ -37,7 +37,7 @@ __version__ = '0.1.0-dev'
 # This will set log level from the environment variable LOGLEVEL or default
 # to warning. You can also just hardcode the error if this is simple.
 _loglevel = getattr(logging, os.getenv('LOGLEVEL', 'WARNING').upper())
-_logformat = "%(asctime)s - %(levelname)s - %(name)s - %(message)s"
+_logformat = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 logging.basicConfig(level=_loglevel, format=_logformat)
 # Kept for convenience but should remove it if not needed
 _log = logging.getLogger(__name__)
