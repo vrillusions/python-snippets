@@ -8,6 +8,9 @@ Default log level is DEBUG, can alter with LOGLEVEL env variable.
 
 Mostly taken from https://gist.github.com/crmccreary/5610068
 
+TODO: extract iv from ciphertext
+TODO: move this file to new template.
+
 """
 
 from __future__ import absolute_import, print_function, unicode_literals
@@ -46,7 +49,8 @@ def main():
     enc_cipher = base64.b64encode(cipher)
     print("'Example String' becomes:", enc_cipher)
     # This doesn't have to happen explicitly but you do need to reinit AES for
-    # each separate string you're encoding.
+    # each separate string you're encoding. Deleting it would likely free up
+    # some memory though
     del aes
 
     text = "tests\n"
@@ -57,9 +61,56 @@ def main():
     print("'tests' becomes:", enc_cipher)
 
     ciphertext = base64.b64decode('hCTVzM84cuWX2LuvKfb8zg==')
+    print("ciphertext in hex:", ciphertext.encode('hex'))
+    print("Using iv", iv.encode('hex'))
+    # iv is first 16 bytes of ciphertext
+    #extract_iv = ciphertext[:16]
+    #print("Extracted iv", extract_iv.encode('hex'))
     aes = AES.new(key, AES.MODE_CBC, iv)
     text = aes.decrypt(ciphertext)
     print("'hCTVzM84cuWX2LuvKfb8zg==' decrypts to:", encoder.decode(text))
+    del aes
+
+    # make sure everything but key is deleted
+    del pad_text, iv, cipher, ciphertext, enc_cipher, text
+    text = "tests\n"
+    pad_text = encoder.encode(text)
+    iv = Random.new().read(AES.block_size)
+    print("Created iv %s" % iv.encode('hex'))
+    aes = AES.new(key, AES.MODE_CBC, iv)
+    cipher = aes.encrypt(pad_text)
+    # prepend iv to ciphertext
+    ciphertext = iv + cipher
+    enc_cipher = base64.b64encode(ciphertext)
+    print("'tests' becomes:", enc_cipher)
+
+    # make sure everything but key and enc_cipher is deleted
+    del aes, pad_text, iv, cipher, ciphertext, text
+    print("decrypting", enc_cipher)
+    ciphertext = base64.b64decode(enc_cipher)
+    print("  in hex:", ciphertext.encode('hex'))
+    # extract iv from ciphertext
+    iv = ciphertext[:16]
+    print("Extracted iv", iv.encode('hex'))
+    cipher = ciphertext[16:]
+    print("Extracted cipher", cipher.encode('hex'))
+    aes = AES.new(key, AES.MODE_CBC, iv)
+    text = aes.decrypt(cipher)
+    print("Decrypted string:", encoder.decode(text))
+
+
+    # This version:
+    # - encrypt 'tests' with a random iv and a static key
+    # - prepend iv to ciphertext
+    # - delete iv
+    # - extract iv from ciphertext
+    # - decrypt using extracted iv and static key
+    #
+    # Create another version given a password, do sha256 to get a 32 byte key
+    # which is then used for encryption
+    #
+    # Create another version where given password decrypts the actual key that
+    # is used for encryption/decryption
 
 
 

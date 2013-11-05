@@ -91,6 +91,8 @@ OpenSSL Samples
         iv =5ECBCF9BC83BD881570A04854A864D69
         hCTVzM84cuWX2LuvKfb8zg==
 
+* TODO: all the above assume the iv is known. Instead the iv can be stored with the ciphertext by just prepending it to result. This is still secure as the iv is to CBC what salts are to hashed passwords (roughly).
+
 Python
 ------
 
