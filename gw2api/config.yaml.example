@@ -1,6 +1,5 @@
 ---
-#world_name: Tarnished Coast ##Currently not implemented so you need to use
-#    get_names.sh script to search for what the world_id is.
+#world_name: Tarnished Coast ##Currently not used
 world_id: 1017
 #loglevel: debug
 loglevel: warning
@@ -25,17 +24,119 @@ events:
     # All events have same description
     default_event_description: Scarlet's Minions Invade!
     event_ids:
-      - id: 11442531-6B20-411F-B0A6-D2A2C31DD668
-      - id: 92979945-63A4-42D7-8AE5-1EFADC9E636F
-      - id: 90FEBBE9-0066-42CF-9C48-703C920AFB9D
-      - id: 9795C994-4C12-4E1F-82A6-D541F76D9D37
-      - id: 46BBCFDD-1285-4246-A9FA-620773C7D4C6
-      - id: 526EFDC9-3F3C-492E-911E-14AFE9EAE70D
       - id: FE5F6233-DAD6-4C63-921D-F132DFCF3397
+      - id: 92979945-63A4-42D7-8AE5-1EFADC9E636F
+      - id: 11442531-6B20-411F-B0A6-D2A2C31DD668
       - id: 5FE50E83-758B-4573-A424-A1661FBC970A
-      - id: 6195E248-1DD4-452B-A7DD-3472162E0683
-      - id: 6DEB01AE-675E-4FF9-9789-53CB73FC621E
-      - id: CF657BC1-D5CE-41D3-A630-A3E509451B7A
-      - id: D1B8B6D2-5E61-44DE-92C6-D49A9BBBB6E2
-      - id: C7CC535C-81A1-4E84-993B-6384C911399A
-
+      - id: 526EFDC9-3F3C-492E-911E-14AFE9EAE70D
+      - id: 9795C994-4C12-4E1F-82A6-D541F76D9D37
+  - name: Inquest Golem Mark II
+    event_ids:
+      - id: 3ED4FEB4-A976-4597-94E8-8BFD9053522F
+        description: Disable the containers before they release their toxins.
+      - id: A7E0F553-C4E1-452F-B39F-7BDBEC8B0BB1
+        description: Harvest kelp from the reef lurker fields so the Lonatl chief can heal his tribe.
+      - id: 9AA133DC-F630-4A0E-BB5D-EE34A2B306C2
+        description: Defeat the Inquest's golem Mark II.
+  - name: Great Jungle Wurm
+    event_ids:
+      - id: 613A7660-8F3A-4897-8FAC-8747C12E42F8
+        description: Protect Gamarien as he scouts Wychmire Swamp.
+      - id: 456DD563-9FDA-4411-B8C7-4525F0AC4A6F
+        description: Destroy the blighted growth.
+      - id: 1DCFE4AA-A2BD-44AC-8655-BBD508C505D1
+        description: Kill the giant blighted grub.
+      - id: CF6F0BB2-BD6C-4210-9216-F0A9810AA2BD
+        description: Destroy the blighted growth.
+      - id: 61BA7299-6213-4569-948B-864100F35E16
+        description: Destroy the avatars of blight.
+      - id: C5972F64-B894-45B4-BC31-2DEEA6B7C033
+        description: Defeat the great jungle wurm.
+  - name: Shadow Behemoth
+    event_ids:
+      - id: CFBC4A8C-2917-478A-9063-1A8B43CC8C38
+        description: Drive back Underworld creatures by destroying portals in the Heartwoods.
+      - id: E539A5E3-A33B-4D5F-AEED-197D2716F79B
+        description: Drive back Underworld creatures by destroying portals in the monastery.
+      - id: AFCF031A-F71D-4CEA-85E1-957179414B25
+        description: Drive back Underworld creatures by destroying portals in Taminn Foothills.
+      - id: 36330140-7A61-4708-99EB-010B10420E39
+        description: Drive back Underworld creatures by destroying portals in the swamp.
+      - id: 31CEBA08-E44D-472F-81B0-7143D73797F5
+        description: Defeat the shadow behemoth.
+  - name: The Shatterer
+    event_ids:
+      - id: 8E064416-64B5-4749-B9E2-31971AB41783
+        description: Escort the Sentinel squad to the Vigil camp in Lowland Burns.
+      - id: 580A44EE-BAED-429A-B8BE-907A18E36189
+        description: Collect siege weapon pieces for Crusader Blackhorn.
+      - id: 03BF176A-D59F-49CA-A311-39FC6F533F2F
+        description: Slay the Shatterer
+  - name: Fire Elemental
+    event_ids:
+      - id: 6B897FF9-4BA8-4EBD-9CEC-7DCFDA5361D8
+        description: Destroy the chaotic materials created by the reactor meltdown.
+      - id: 5E4E9CD9-DD7C-49DB-8392-C99E1EF4E7DF
+        description: Escort the C.L.E.A.N. 5000 golem while it absorbs clouds of chaos magic.
+      - id: 2C833C11-5CD5-4D96-A4CE-A74C04C9A278
+        description: Defend the C.L.E.A.N. 5000 golem.
+      - id: FCB42C06-547F-4DA2-904B-0098E60C47BC
+        description: Destroy the C.L.E.A.N. 5000 golem stolen by the Inquest.
+      - id: 33F76E9E-0BB6-46D0-A3A9-BE4CDFC4A3A4
+        description: Destroy the fire elemental created from chaotic energy fusing with the C.L.E.A.N. 5000's energy core.
+  - name: The Frozen Maw
+    event_ids:
+      - id: 6F516B2C-BD87-41A9-9197-A209538BB9DF
+        description: Protect Tor the Tall's supplies from the grawl.
+      - id: D5F31E0B-E0E3-42E3-87EC-337B3037F437
+        description: Protect Scholar Brogun as he investigates the grawl tribe.
+      - id: 6565EFD4-6E37-4C26-A3EA-F47B368C866D
+        description: Destroy the dragon totem.
+      - id: 90B241F5-9E59-46E8-B608-2507F8810E00
+        description: Defeat the shaman's elite guard.
+      - id: DB83ABB7-E5FE-4ACB-8916-9876B87D300D
+        description: Defeat the Svanir shamans spreading the dragon's corruption.
+      - id: 374FC8CB-7AB7-4381-AC71-14BFB30D3019
+        description: Destroy the corrupted portals summoning creatures from the mists.
+      - id: F7D9D427-5E54-4F12-977A-9809B23FBA99
+        description: Kill the Svanir shaman chief to break his control over the ice elemental.
+  - name: Claw of Jormag
+    event_ids:
+      - id: 429D6F3E-079C-4DE0-8F9D-8F75A222DB36
+        description: Destroy the dragon crystal at the Pact flak cannons.
+      - id: 0CA3A7E3-5F66-4651-B0CB-C45D3F0CAD95
+        description: Destroy the dragon crystal on the road to Slough of Despond.
+      - id: 96D736C4-D2C6-4392-982F-AC6B8EF3B1C8
+        description: Destroy the dragon crystal at Elder's Vale.
+      - id: C957AD99-25E1-4DB0-9938-F54D9F23587B
+        description: Destroy the dragon crystal near the Pact siege wall.
+      - id: BFD87D5B-6419-4637-AFC5-35357932AD2C
+        description: Lure out the Claws of Jormag by destroying the final dragon crystal.
+      - id: 0464CB9E-1848-4AAA-BA31-4779A959DD71
+        description: Defeat the Claw of Jormag.
+  - name: Megadestroyer
+    event_ids:
+      - id: 294E08F6-CA36-42B3-8D06-B321BA06EECA
+        description: Stop the Inquest's destroyer-essence collectors by destroying their power cores.
+      - id: 61D4579A-C53F-4C26-A31B-92FABE3DA566
+        description: Defend the Advanced Arcanomics lab.
+      - id: 3BA29A69-A30B-405D-96AC-CBA5D511C163
+        description: Stop the rampaging Inquest golem.
+      - id: 9E5D9F1A-FE14-49C6-917F-43AAE227165C
+        description: Slay destroyers, and close their fissures on the volcano's north side.
+      - id: 584A4D22-33DC-4D77-A5D9-2FA7379401ED
+        description: Eliminate destroyer forces in the volcano's southeast cavern.
+      - id: 4210CE81-BDB7-448E-BE33-46E18A5A3477
+        description: Eliminate destroyer forces on the volcano's south side.
+      - id: 36E81760-7D92-458E-AA22-7CDE94112B8F
+        description: Protect the asura and their technology while they quell the unstable volcano.
+      - id: C876757A-EF3E-4FBE-A484-07FF790D9B05
+        description: Kill the megadestroyer before it blows everyone up.
+# Events that I know I'm missing
+# - Fire Shaman
+# - Tequatl the Sunless
+# - Dredge Commissar
+# - Foulbear Chieftain
+# - Karka Queen
+# - Modniir Ulgoth
+# - Gates of Arah
