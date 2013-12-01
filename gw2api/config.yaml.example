@@ -3,6 +3,7 @@
 world_id: 1017
 #loglevel: debug
 loglevel: warning
+hide_complete: true
 events:
   - name: Taidha Covington
     include_map_name: false

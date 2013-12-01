@@ -251,6 +251,10 @@ def main(argv=None):
         for event_id in event['event_ids']:
             event_status = gw2.get_event_status(event_id['id'])
             log.debug(event_status)
+            is_complete = event_status['state'] in ('Success', 'Fail',
+                    'Inactive', 'Warmup')
+            if config['hide_complete'] and is_complete:
+                continue
             if ('include_map_name' in event
                     and event['include_map_name'] is True):
                 map_name = gw2.lookup_name('map_names', event_status['map_id'])
