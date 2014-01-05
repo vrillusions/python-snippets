@@ -1,10 +1,13 @@
 #!/usr/bin/env python
-# vim:ts=4:sw=4:ft=python:fileencoding=utf-8
+# vim: set fileencoding=utf-8 :
 """Python Template.
 
 This is a template for python.
 NOTE: The __future__ imports that make it more v3.x ready were added in v2.6.
 Thus this template will only work in python v2.6 or higher.
+
+Note: both a pseudo format of documenting like in this block and rst style
+documentation are included.  Choose which one you prefer and be consistent.
 
 Requirements
     Python v2.6 or higher: This is due to the `from future` imports and to make
@@ -98,14 +101,11 @@ class SampleClass(object):
 def _parse_opts(argv=None):
     """Parse the command line options.
 
-    Args:
-        argv: List of arguments to process. If not provided then will use
-            optparse default
-
-    Returns:
-        options,args where options is the list of specified options that were
-            parsed and args is whatever arguments are left after parsing all
-            options.
+    :param list argv: List of arguments to process. If not provided then will
+        use optparse default
+    :return: options,args where options is the list of specified options that
+        were parsed and args is whatever arguments are left after parsing all
+        options.
 
     """
     parser = OptionParser(version='%prog {}'.format(__version__))
@@ -118,20 +118,17 @@ def _parse_opts(argv=None):
     return options, args
 
 
-def main(options=None, argv=None):
+def main(argv=None):
     """The main function.
 
-    Args:
-        options: Options as parsed from optparse in the conditional that calls
-            main. Default is None.
-        argv: List of arguments passed to command line. Default is None, which
-            then will translate to having it set to sys.argv. Typically is used
-            in conjuction with option and contains the information added to the
-            end after all the options.
+    :param list argv: List of arguments passed to command line. Default is None,
+        which then will translate to having it set to sys.argv. Typically is
+        used in conjuction with option and contains the information added to the
+        end after all the options.
 
-    Returns:
-        Optionally returns a numeric exit code. If not 0 then assume an error
-            has happened.
+    :return: Optionally returns a numeric exit code. If not 0 then assume an
+        error has happened.
+    :rtype: int
 
     """
     log = logging.getLogger()
@@ -156,22 +153,5 @@ def main(options=None, argv=None):
 
 
 if __name__ == "__main__":
-    try:
-        # main should not call sys.exit() itself. Instead it should return a
-        # non-zero number which will get passed to sys.exit.
-        sys.exit(main())
-    # The below exceptions store their exception in exc. In rest of module you
-    # should store the exceptions in err. Exc was used here so there's no
-    # chance of overwriting variables in a different scope.
-    #
-    # Uncomment if you need to do something if the user cancels.
-    #except KeyboardInterrupt as exc:
-    #    # Ctrl-c
-    #    log.error('Received keyboard interupt')
-    #    raise exc
-    # This catches all "non system exiting" exceptions
-    except Exception as exc:
-        logging.critical("ERROR, UNEXPECTED EXCEPTION")
-        logging.critical(str(exc), exc_info=True)
-        sys.exit(1)
+    sys.exit(main())
 
