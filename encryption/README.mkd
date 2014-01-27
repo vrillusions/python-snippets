@@ -1,10 +1,69 @@
-Encryption Testing
-==================
+# Encryption Testing
 
 The goal of this is to encrypt/decrypt something in python/openssl interchangeably. On python side I'm using pycrypto (python-crypto package in ubuntu).
 
-OpenSSL Samples
----------------
+## Overview
+
+Ultimately here's the overview of what should happen
+
+* User provides plaintext and a password
+* Passphrase is derived from the password using PBKDF2 (also consider scrypt). PBKDF2 requires a salt value.  Could be derrived from password, perhaps just do an sha256 of password and make that the salt? Since it's not provided in final file should still be secure. An alternative could be using the same iv that's used to encrypt the file but that may be less secure.  Or have an iv that's 32 bytes where the first 16 is used for PBKDF2 and other 16 for the file. Scrypt can just be set to 1 second and 1mb.
+* The derived passphrase is then used to encrypt the actual key used.  The actual key is a pseudorandom string and is encrypted with the derived passphrase using something like AES-256-CBC
+* Plaintext is encrypted using AES-256-CBC (should support others too). Ensure the IV is randomly generated.
+* Resulting ciphertext has the iv and encrypted key prepended to it and then base64 encoded.
+* Final format of ciphertext:
+
+        [numeric version(1 byte) starting with 1][iv(16 bytes)][encrypted key(32 bytes][encrypted plaintext]
+
+The important part in all this is to not have the encryption directly based off the user supplied password. Instead that password should encrypt the actual key that's used for encryption. Without this when a user wants to change their password it would require decrypting all content encrypted with old key and then encrypting with new key.
+
+Pseudocode for encryption:
+
+    BLOCKSIZE = 16 # all aes is 16 byte blocks
+    KEYSIZE = 32   # for aes256
+    plaintext = askfor('Provide text to encrypt: ')
+    password = askfor('Provide password to use for encryption: ')
+    password_expanded = pbkdf2(input=password, rounds=4096, salt=sha256(password), length=KEYSIZE)
+    key_plaintext = get_random(bytes=KEYSIZE)
+    key_encrypted = aes256.encrypt(input=key_plaintext, key=password_expanded, iv=sha256(password_expanded)[:BLOCKSIZE])
+    iv = get_random(bytes=BLOCKSIZE)
+    ciphertext = aes256.encrypt(input=pkcs7.encode(plaintext, len=BLOCKSIZE), key=key_plaintext, iv=iv)
+    result = base64.encode(1 . iv . key_encrypted . ciphertext)
+
+Downside to this method is with a separate key for each blob of plaintext then if a user changes their password it doesn't need to reencrypt the entire chunk of ciphertext but it does need to reencrypt the keys for all these. Obvious benefit is a unique key each time it's used.
+
+Alternative ciphertext format:
+
+    [iv(16 bytes)][encrypted plaintext]
+
+In this format all encrypted plaintext would use the same key.  This key is stored elsewhere.  In the original motivation for all this (client for cloud storage) there would be a "key.enc" or similar. That's where the key after taking the user's expanded password and and encrypting a pseudorandom string would go. The problem is if that file gets deleted or corrupted then all access is gone. One option is to base32 encode the key (easier to input than base64) and tell the user to write that down.  For example with 32 random bytes, spaces added, and remove padding characters gives the example `CM7Z E7NF IKNQ 7XYU 7GXV RE3K VU2D UGS4 DPMW PW2C FPJ7 BPWE FIOA`.  Could offer both an encrypted version and plain text version (in case the user forgets their password).
+
+Another option for handling the password is via XOR. In this method the key is generated. The user provides a password which then goes through `PBKDF2` or similar so it's the same size as key (probably 256).  Then the expanded password is XOR'd with the private key. That result is the key for encryption. This would replace having to encrypt/decrypt the key before encrypt/decrypt the message itself.
+
+### Limitations
+
+Biggest known limitation with all this is no message authentication. In a perfect world you would have something like this:
+
+    hmac_key = (origin unknown. ideally it would be based off a separate password)
+    ciphertext = iv + encrypted_plaintext
+    ciphertext_signature = hmac('sha1', hmac_key, ciphertext)
+    print base64encode(ciphertext_signature + ciphertext)
+
+The receiving side would take that, generate a signature with the version of the `hmac_key` they know about and verify the signature matches. If it doesn't match immediately reject it without bothering to decrypt it.  Primary reason I'm not doing it is the openssl enc function doesn't offer it.  Also I'm not sure how to obtain the `hmac_key`.  I'd prefer it to be completely separate from the password/key used for encrypting it.  One option is to simply have that `key.enc` file have two keys.  The key used for encrypt and the key used for hmac.  There are still two different keys but they are both protetected by the user's one password.  But if an attacker could take a message and determine the key that was used to sign the message they couldn't immediately then decrypt all messages.  They would be able to sign ciphertext correctly so decryption would be attempted (and will hopefully fail since the two keys are different).
+
+## Terms
+
+Mostly for my own reference to make sure I use them correctly
+
+* `plaintext` - The unencrypted data ("Example String" in below examples)
+* `cipher`/`cipher suite` - The method used to encrypt the `plaintext`. (eg AES-256-CBC). Technically `cipher` refers to just the method used (eg AES) but here is used interchangeably with `cipher suite`
+* `ciphertext` - The encrypted data resulting from the encryption of `plaintext`
+* `key` - The value used to encrypt the `plaintext` to get the `ciphertext`
+* `passphrase` - Supplied by user. Similar to a password but should be much longer and complex
+* `iv` - Short for initialization vector. This is the initial input in to a `cipher`. This should be unique each time some `plaintext` is encrypted. This way the same `plaintext` can be encrypted but with different `iv` will result in different `ciphertext`. This is commonly saved with the `ciphertext` as knowing the `iv` doesn't weaken the `ciphertext` any.
+* `wrapped key` (unsure on term) - This is the `key` encrypted with a user-supplied `passphrase`.
+
+## OpenSSL Samples
 
 * Have openssl derive everything from given password (it uses md5 for this by default)
 
@@ -93,12 +152,11 @@ OpenSSL Samples
 
 * TODO: all the above assume the iv is known. Instead the iv can be stored with the ciphertext by just prepending it to result. This is still secure as the iv is to CBC what salts are to hashed passwords (roughly).
 
-Python
-------
+## Python
 
 Python will need to be full compatible with everything above. Primarily the final example as that's about what will actually happen.  It would be preferable to pass the user's password through a [pbkdf2](https://en.wikipedia.org/wiki/PBKDF2). Or just run the line that encrypts the source passphrase and each run's input is the output from previous (don't do base64 till final run). Basically something to slow down a brute force attack. Also python will need to know how to extract the salt from encrypted content and properly determine the key and iv values. Pycrypto may actually handle this though.
 
-* OpenSSL uses PKCS#5 padding officially which is technically invalid.  PKCS#5 was only defined for 8 byte block sizes and aes uses 16 byte blocks.  PKCS#7 is compatible and officially defined for up to 256 byte block sizes. They can be used interchangably. [reference](https://en.wikipedia.org/wiki/Padding_%28cryptography%29#PKCS7).
+* OpenSSL uses PKCS#5 padding officially which is technically invalid.  PKCS#5 was only defined for 8 byte block sizes and aes uses 16 byte blocks.  PKCS#7 is compatible and officially defined for up to 256 byte block sizes. They can be used interchangeably. [reference](https://en.wikipedia.org/wiki/Padding_%28cryptography%29#PKCS7).
 * When instantiating the AES class you have to make sure not to reuse the same instance again.  Do not do this:
 
         aes = AES.new(key, AES.MODE_CBC, iv)
@@ -111,3 +169,7 @@ Python will need to be full compatible with everything above. Primarily the fina
         b64_ciphertext2 = base64.b64encode
 
 * calling encrypt on the same class will continue the CBC mode. That means to decrypt `ciphertext2` you need to decrypt `ciphertext` first. In practice this will be contained in a wrapper class which would handle cleaning up after something is encrypted. Plus like it says the iv should be a new random 16 byte string.
+
+## Polar SSL
+
+[Polar SSL](https://polarssl.org/) is also a popular ssl library. Have not done too much research into this. It's meant more for developers than end users but there are runtimes available. Going off their [crypt_and_hash example](https://github.com/polarssl/polarssl/blob/master/programs/aes/crypt_and_hash.c) the file format is different. Should be easy enough to determine compatibility though.

@@ -29,6 +29,35 @@ from pkcs7 import PKCS7Encoder
 __version__ = 'alpha'
 
 
+class MyCrypto(object):
+    """Wrapper for encryption functions.
+
+    This goal around this is to create a common api and some convenience
+    functions to make things easier. Also if changing to a new service only this
+    wrapper needs to be modifed.
+
+    Short list of what this should do:
+      - choose between ciphers (AES and Blowfish are the two pycrypto has)
+      - have a method to generate a random IV
+      - have a method to manage a key that's encrypted by a user's password. an
+        example:
+          - user enters their password
+          - decrypts the actual key (which is just randomness)
+          - if encrypting, use the generated IV with the generate key to encrypt
+            the content.
+          - prepend the IV to encrypted message
+      - display as base64 with trailing =s removed (make that optional). Store
+        as binary.
+      - perhaps move the pkcs7 library to here? that's all it would be needed
+        for. Probably not because this is already going to be a large class
+      - methods to add and remove IV from message
+      - strengthen the provided password using PBKDF2 or scrypt or similar
+
+    """
+    def __init__():
+        pass
+
+
 def main():
     """The main function."""
     # TODO: create an AESCipher class or just a general Cipher class or
