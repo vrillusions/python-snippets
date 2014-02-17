@@ -1,0 +1,27 @@
+# pycache
+
+CONSIDER MOVING TO SEPARATE REPO
+
+This is a wrapper around either pickle or shelve to be used for caching
+information.
+
+## Usage
+
+```python
+import pycache
+
+myinfo = {
+    'id': '123',
+    'name': 'John Doe',
+    'email': 'jdoe@example.com',
+    }
+# Default backend is pickle (which will actually use cPickle)
+pycache.dump('cache.db', myinfo, backend='shelve')
+
+# Will autodetect storage format or can specify backend
+cached = pycache.load('filename.db')
+```
+
+## Limitations
+
+Shelve and pickle have two different use cases. Shelve is meant to be used for large datasets where only few entries are typically accessed.
