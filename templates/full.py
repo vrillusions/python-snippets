@@ -41,9 +41,9 @@ __version__ = '0.1.0-dev'
 # DEBUG, INFO, WARNING, ERROR, or CRITICAL
 # This will set log level from the environment variable LOGLEVEL or default
 # to warning. You can also just hardcode the error if this is simple.
-_LOGLEVEL = getattr(logging, os.getenv('LOGLEVEL', 'WARNING').upper())
-_LOGFORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-logging.basicConfig(level=_LOGLEVEL, format=_LOGFORMAT)
+_loglevel = getattr(logging, os.getenv('LOGLEVEL', 'WARNING').upper())
+_logformat = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+logging.basicConfig(level=_loglevel, format=_logformat)
 
 
 # Examples on documenting functions and classes. You can also look in to making
