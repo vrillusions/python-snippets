@@ -19,6 +19,8 @@ import sys
 import traceback
 import logging
 import base64
+import hashlib
+from getpass import getpass
 
 from Crypto.Cipher import AES
 from Crypto import Random
@@ -127,6 +129,27 @@ def main():
     text = aes.decrypt(cipher)
     print("Decrypted string:", encoder.decode(text))
 
+
+    # this run we take a password and do a sha256 hash to get the key. Then use
+    # random iv encrypt a string
+    del iv, cipher, ciphertext, enc_cipher, text
+    password = getpass('Enter password: ')
+    password2 = getpass('Confirm: ')
+    if password !=  password2:
+        print('passwords do not match (this is where I should ask again)')
+        sys.exit(1)
+    key = hashlib.sha256(password).digest()
+    print("using key:", key.encode('hex'))
+    plaintext = "tests\n"
+    plaintext_padded = encoder.encode(plaintext)
+    iv = Random.new().read(AES.block_size)
+    print('Created iv: ', iv.encode('hex'))
+    Aes = AES.new(key, AES.MODE_CBC, iv)
+    ciphertext = Aes.encrypt(plaintext_padded)
+    # TODO: try to join these in some other way
+    # although they show as two strings so using + shouldn't be an issue
+    result = base64.b64encode(iv + ciphertext)
+    print('Resulting string:', result)
 
     # This version:
     # - encrypt 'tests' with a random iv and a static key
