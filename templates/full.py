@@ -11,8 +11,8 @@ documentation are included.  Choose which one you prefer and be consistent.
 
 Requirements
     Python v2.6 or higher: This is due to the `from future` imports and to make
-        this more compatible with version 3.x. For example this template can run
-        on both python v2 and v3.
+        this more compatible with version 3.x. For example this template can
+        run on both python v2 and v3.
 
 Environment Variables
     LOGLEVEL: overrides the level specified here. Choices are debug, info,
@@ -102,9 +102,11 @@ def _parse_opts(argv=None):
     """
     parser = OptionParser(version='%prog {}'.format(__version__))
     parser.set_defaults(verbose=False)
-    parser.add_option('-c', '--config', dest='config', metavar='FILE',
+    parser.add_option(
+        '-c', '--config', dest='config', metavar='FILE',
         help='Use config FILE (default: %default)', default='config.ini')
-    parser.add_option('-v', '--verbose', dest='verbose', action='store_true',
+    parser.add_option(
+        '-v', '--verbose', dest='verbose', action='store_true',
         help='Be more verbose (default is no)')
     (options, args) = parser.parse_args(argv)
     return options, args
@@ -113,25 +115,21 @@ def _parse_opts(argv=None):
 def main(argv=None):
     """The main function.
 
-    :param list argv: List of arguments passed to command line. Default is None,
-        which then will translate to having it set to sys.argv. Typically is
-        used in conjuction with option and contains the information added to the
-        end after all the options.
+    :param list argv: List of arguments passed to command line. Default is
+        None, which then will translate to having it set to sys.argv. Typically
+        is used in conjuction with option and contains the information added to
+        the end after all the options.
 
     :return: Optionally returns a numeric exit code. If not 0 then assume an
         error has happened.
     :rtype: int
 
     """
-    # Configure logging in main() or you can get errors during import
-    loglevel = getattr(logging, os.getenv('LOGLEVEL', 'WARNING').upper())
-    logformat = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-    logging.basicConfig(level=loglevel, format=logformat)
     log = logging.getLogger()
     if argv is None:
         argv = sys.argv
-    #(options, args) = _parse_opts(argv)
     # If not using args then don't bother storing it
+    # (options, args) = _parse_opts(argv)
     options = _parse_opts(argv)[0]
     if options.verbose:
         log.setLevel(logging.DEBUG)
@@ -149,5 +147,8 @@ def main(argv=None):
 
 
 if __name__ == "__main__":
+    # Configure logging only if called directly
+    loglevel = getattr(logging, os.getenv('LOGLEVEL', 'WARNING').upper())
+    logformat = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    logging.basicConfig(level=loglevel, format=logformat)
     sys.exit(main())
-
