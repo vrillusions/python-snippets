@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# vim: set fileencoding=utf-8 :
+# -*- coding: utf-8 -*-
 """Python Template.
 
 This is a template for python.

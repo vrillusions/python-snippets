@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# vim: set fileencoding=utf-8 :
+# -*- coding: utf-8 -*-
 """Python Template.
 
 This is a template for python 3.  It's only been verified on python v3.3
