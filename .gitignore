@@ -1,2 +1,4 @@
 *.py?
 /gw2api/*.json
+/logging/logging_config/*.log
+/logging/utclogging/*.log
