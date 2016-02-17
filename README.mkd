@@ -1,4 +1,4 @@
-# Python Snippets [![Project Status](http://stillmaintained.com/vrillusions/python-snippets.png)](http://stillmaintained.com/vrillusions/python-snippets)
+# Python Snippets
 
 This is just a collection of snippets or just reference on how to implement
 various things.  No guarantees if any of this works or is the "right way" to
